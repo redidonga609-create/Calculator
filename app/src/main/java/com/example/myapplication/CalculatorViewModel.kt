@@ -41,9 +41,12 @@ class CalculatorViewModel : ViewModel() {
             "÷" -> "/"
             else -> op
         }
-        val value = currentNumber.toDoubleOrNull() ?: 0.0
-        rawExpression.append(value).append(symbol)
-        previousExpression = formatRaw(rawExpression.toString()) + " $op "
+        if (justEvaluated) {
+            rawExpression.clear()
+            justEvaluated = false
+        }
+        rawExpression.append(currentNumber).append(symbol)
+        previousExpression = formatRaw(rawExpression.toString())
         currentOperator = op
         currentNumber = "0"
         justEvaluated = false
@@ -88,14 +91,26 @@ class CalculatorViewModel : ViewModel() {
 
     fun onEquals() {
         errorMessage = null
+
+        // ИСПРАВЛЕНИЕ: если результат уже вычислен, просто выходим
+        if (justEvaluated) {
+            return
+        }
+
         try {
-            val expr = rawExpression.toString() + currentNumber
+            val raw = rawExpression.toString()
+            val expr = if (raw.endsWith(")")) {
+                raw
+            } else {
+                raw + currentNumber
+            }
+
             val r = CalculatorEngine.evaluate(expr)
             val formatted = formatResult(r)
             previousExpression = "$expr ="
             currentOperator = null
             currentNumber = formatted
-            rawExpression.clear().append(formatted.toDouble())
+            rawExpression.clear().append(formatted)
             justEvaluated = true
         } catch (e: Exception) {
             errorMessage = e.message ?: "Ошибка вычисления"
