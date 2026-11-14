@@ -45,32 +45,20 @@ class CalculatorViewModel : ViewModel() {
             rawExpression.clear()
             justEvaluated = false
         }
+        if (currentNumber == "0" && rawExpression.isNotEmpty()) {
+            val lastChar = rawExpression.last()
+            if (lastChar.isDigit() || lastChar == ')') {
+                rawExpression.append(symbol)
+                previousExpression = formatRaw(rawExpression.toString())
+                currentOperator = op
+                return // Выходим, не добавляя лишний ноль
+            }
+        }
         rawExpression.append(currentNumber).append(symbol)
         previousExpression = formatRaw(rawExpression.toString())
         currentOperator = op
         currentNumber = "0"
         justEvaluated = false
-    }
-
-    fun onFactorial() {
-        errorMessage = null
-        try {
-            val v = currentNumber.toDouble()
-            val r = CalculatorEngine.evaluate("$v!")
-            currentNumber = formatResult(r)
-            if (rawExpression.isNotEmpty() && currentOperator != null) {
-                val s = rawExpression.toString()
-                val lastIdx = maxOf(s.lastIndexOf('+'), s.lastIndexOf('-'), s.lastIndexOf('*'), s.lastIndexOf('/'))
-                val head = if (lastIdx >= 0) s.substring(0, lastIdx + 1) else ""
-                rawExpression.clear().append(head).append(currentNumber.toDouble()).append("!")
-                previousExpression = formatRaw(rawExpression.toString()) + " $currentOperator "
-            } else {
-                rawExpression.clear().append(currentNumber.toDouble()).append("!")
-                previousExpression = formatRaw(rawExpression.toString())
-            }
-        } catch (e: Exception) {
-            errorMessage = e.message ?: "Ошибка"
-        }
     }
 
     fun onBackspace() {
@@ -92,7 +80,6 @@ class CalculatorViewModel : ViewModel() {
     fun onEquals() {
         errorMessage = null
 
-        // ИСПРАВЛЕНИЕ: если результат уже вычислен, просто выходим
         if (justEvaluated) {
             return
         }

@@ -101,7 +101,7 @@ fun Keyboard(modifier: Modifier, vm: CalculatorViewModel) {
     val rows = listOf(
         listOf("C", "(", ")", "⌫", "÷"),
         listOf("7", "8", "9", "×", "^"),
-        listOf("4", "5", "6", "-", "!"),
+        listOf("4", "5", "6", "-", " "),
         listOf("1", "2", "3", "+", "="),
         listOf("0", ".", "00", "±", "%")
     )
@@ -127,7 +127,7 @@ fun Keyboard(modifier: Modifier, vm: CalculatorViewModel) {
 @Composable
 fun CalcButton(text: String, modifier: Modifier, onClick: () -> Unit) {
     val bg = when (text) {
-        "=", "^", "!" -> Color(0xFF4FC3F7)
+        "=", "^", " " -> Color(0xFF4FC3F7)
         "÷", "×", "-", "+" -> Color(0xFF2A2A2A)
         "C", "⌫" -> Color(0xFF3A3A3A)
         else -> Color(0xFF1F1F1F)
@@ -163,7 +163,6 @@ private fun handlePress(key: String, vm: CalculatorViewModel) {
         "×" -> vm.onOperator("×")
         "÷" -> vm.onOperator("÷")
         "^" -> vm.onOperator("^")
-        "!" -> vm.onFactorial()
         "(" -> vm.onParen(open = true)
         ")" -> vm.onParen(open = false)
         "±" -> vm.onToggleSign()
