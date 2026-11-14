@@ -63,10 +63,10 @@ fun Display(modifier: Modifier, vm: CalculatorViewModel) {
         modifier = modifier
             .background(Color(0xFF1E1E1E), RoundedCornerShape(16.dp))
             .padding(16.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.End
+        verticalArrangement = Arrangement.Bottom, // Текст прижат к низу
+        horizontalAlignment = Alignment.End // Текст выровнен по правому краю
     ) {
-        Text(
+        Text( // Предыдущее выражение
             text = vm.previousExpression,
             color = Color.Gray,
             fontSize = 18.sp,
@@ -75,7 +75,7 @@ fun Display(modifier: Modifier, vm: CalculatorViewModel) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.End
         )
-        Text(
+        Text( // Текущий оператор
             text = vm.currentOperator ?: "",
             color = Color(0xFF4FC3F7),
             fontSize = 22.sp,
@@ -83,7 +83,7 @@ fun Display(modifier: Modifier, vm: CalculatorViewModel) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.End
         )
-        Text(
+        Text( // Число или ошибка
             text = vm.errorMessage ?: vm.currentNumber,
             color = if (vm.errorMessage != null) Color(0xFFFF5252) else Color.White,
             fontSize = 48.sp,
@@ -109,10 +109,10 @@ fun Keyboard(modifier: Modifier, vm: CalculatorViewModel) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         for (row in rows) {
             Row(
-                modifier = Modifier.fillMaxWidth().weight(1f),
+                modifier = Modifier.fillMaxWidth().weight(1f), // Заполняет вссе предоставлене пространство
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                for (btn in row) {
+                for (btn in row) { // Создание кнопок
                     CalcButton(
                         text = btn,
                         modifier = Modifier.weight(1f).fillMaxHeight(),
@@ -152,7 +152,6 @@ fun CalcButton(text: String, modifier: Modifier, onClick: () -> Unit) {
     }
 }
 
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ БЕЗ ПУСТЫХ IF
 private fun handlePress(key: String, vm: CalculatorViewModel) {
     when (key) {
         "C" -> vm.onClear()
