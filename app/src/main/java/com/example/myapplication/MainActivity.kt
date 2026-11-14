@@ -22,7 +22,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel  // ← ЭТОТ ИМПОРТ ОСОБЕННО ВАЖЕН!
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +63,7 @@ fun CalculatorScreen(vm: CalculatorViewModel = viewModel()) {
 
 @Composable
 fun Display(modifier: Modifier, vm: CalculatorViewModel) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = modifier
             .background(Color(0xFF1E1E1E), RoundedCornerShape(16.dp))
@@ -70,9 +75,7 @@ fun Display(modifier: Modifier, vm: CalculatorViewModel) {
             text = vm.previousExpression,
             color = Color.Gray,
             fontSize = 18.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
             textAlign = TextAlign.End
         )
         Text( // Текущий оператор
@@ -80,7 +83,7 @@ fun Display(modifier: Modifier, vm: CalculatorViewModel) {
             color = Color(0xFF4FC3F7),
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
             textAlign = TextAlign.End
         )
         Text( // Число или ошибка
@@ -88,11 +91,13 @@ fun Display(modifier: Modifier, vm: CalculatorViewModel) {
             color = if (vm.errorMessage != null) Color(0xFFFF5252) else Color.White,
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
             textAlign = TextAlign.End
         )
+    }
+    LaunchedEffect(vm.currentNumber, vm.errorMessage) {
+        delay(50)
+        scrollState.animateScrollTo(scrollState.maxValue)
     }
 }
 
